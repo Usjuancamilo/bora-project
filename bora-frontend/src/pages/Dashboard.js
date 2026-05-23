@@ -184,7 +184,9 @@ function Dashboard() {
 }
 
 //<div style={{background:'#fff', padding:'30px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>   este codigo es un card con efecto borde y sombra, moderno.
-
+<div style={cardStyle}>
+  contenido
+</div>
 const cardStyle = { background: '#f8f8f8', borderRadius: '10px', padding: '16px' };
 const labelStyle = { margin: '0 0 6px', fontSize: '11px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' };
 const valueStyle = { margin: 0, fontSize: '22px', fontWeight: '500', color: '#111' };
