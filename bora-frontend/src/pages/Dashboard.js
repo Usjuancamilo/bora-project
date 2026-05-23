@@ -63,6 +63,17 @@ function Dashboard() {
   const hoyStr = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const pendientesActivos = pendientesHoy.filter(e => !e.completado && !e.cancelado);
 
+
+  //<div style={{background:'#fff', padding:'30px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>   este codigo es un card con efecto borde y sombra, moderno.
+
+const cardStyle = { background: '#f8f8f8', borderRadius: '10px', padding: '16px' };
+const labelStyle = { margin: '0 0 6px', fontSize: '11px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' };
+const valueStyle = { margin: 0, fontSize: '22px', fontWeight: '500', color: '#111' };
+const hintStyle = { margin: '4px 0 0', fontSize: '12px', color: '#aaa' };
+const btnCheck = { background: '#eaf6ee', color: '#1e8c45', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' };
+const btnX = { background: '#fdeaea', color: '#c0392b', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px' };
+
+
   return (
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
 
@@ -183,15 +194,5 @@ function Dashboard() {
   );
 }
 
-//<div style={{background:'#fff', padding:'30px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>   este codigo es un card con efecto borde y sombra, moderno.
-<div style={cardStyle}>
-  contenido
-</div>
-const cardStyle = { background: '#f8f8f8', borderRadius: '10px', padding: '16px' };
-const labelStyle = { margin: '0 0 6px', fontSize: '11px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' };
-const valueStyle = { margin: 0, fontSize: '22px', fontWeight: '500', color: '#111' };
-const hintStyle = { margin: '4px 0 0', fontSize: '12px', color: '#aaa' };
-const btnCheck = { background: '#eaf6ee', color: '#1e8c45', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' };
-const btnX = { background: '#fdeaea', color: '#c0392b', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px' };
 
 export default Dashboard;
