@@ -28,8 +28,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/eventos/**").permitAll()
-                        .requestMatchers("/api/ventas/**").permitAll()
-                        .requestMatchers("/api/clientes/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
