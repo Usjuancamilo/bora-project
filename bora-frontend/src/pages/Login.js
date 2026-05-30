@@ -5,14 +5,14 @@ function Login({ onLogin }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    console.log('API_URL:', process.env.REACT_APP_API_URL); // ← AGREGA ESTO
+    console.log('API_URL:', process.env.REACT_APP_API_URL);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const credentials = btoa(`${username}:${password}`);
         
-        console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`); // ← Y ESTO
+        console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
 
         try {
             const response = await fetch(
@@ -33,8 +33,6 @@ function Login({ onLogin }) {
             console.error('Error:', err);
         }
     };
-    // ...
-}
 
     return (
         <div style={{
@@ -44,94 +42,90 @@ function Login({ onLogin }) {
             minHeight: '100vh',
             background: '#faf9f7'
         }}>
-        
-        <div style={{
-            background: '#fff',
-            padding: '40px',
-            borderRadius: '12px',
-            boxShadow: '0 2px 8px rgb(0,0,0,0.1)',
-            width: '100%',
-            maxWidth: '400px'
-        }}>
-
-
-        <h1 style={{
-            fontFamily: " 'Cormorant Garamond', Georgia, serif",
-            fontSize: '32px',
-            marginBottom: '8px',
-            textAlign: 'center'
-        }}>Bora</h1>
-        <p style={{
-          fontSize: '12px',
-          color: '#b0ada7',
-          textAlign: 'center',
-          letterSpacing: '.1em',
-          textTransform: 'uppercase',
-          marginBottom: '30px'
-        }}>Tienda Virtual</p>
-
-
-<form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Usuario</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              style={{
+            <div style={{
+                background: '#fff',
+                padding: '40px',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 width: '100%',
-                padding: '10px',
-                border: '1px solid #e8e5df',
-                borderRadius: '6px',
-                fontSize: '14px'
-              }}
-              required
-            />
-          </div>
-          
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Contraseña</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid #e8e5df',
-                borderRadius: '6px',
-                fontSize: '14px'
-              }}
-              required
-            />
-          </div>
-          
-          {error && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '15px' }}>{error}</p>}
-          
-          <button
-            type="submit"
-            style={{
-              width: '100%',
-              padding: '12px',
-              background: '#1a1917',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer'
-            }}
-          >
-            Iniciar sesión
-          </button>
-        </form>
-        
-        <p style={{ fontSize: '12px', color: '#b0ada7', marginTop: '20px', textAlign: 'center' }}>
-          Usuario: admin | Contraseña: admin123
-        </p>
-      </div>
-    </div>
-  );
+                maxWidth: '400px'
+            }}>
+                <h1 style={{
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontSize: '32px',
+                    marginBottom: '8px',
+                    textAlign: 'center'
+                }}>Bora</h1>
+                <p style={{
+                    fontSize: '12px',
+                    color: '#b0ada7',
+                    textAlign: 'center',
+                    letterSpacing: '.1em',
+                    textTransform: 'uppercase',
+                    marginBottom: '30px'
+                }}>Tienda Virtual</p>
 
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Usuario</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                border: '1px solid #e8e5df',
+                                borderRadius: '6px',
+                                fontSize: '14px'
+                            }}
+                            required
+                        />
+                    </div>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Contraseña</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                border: '1px solid #e8e5df',
+                                borderRadius: '6px',
+                                fontSize: '14px'
+                            }}
+                            required
+                        />
+                    </div>
+                    
+                    {error && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '15px' }}>{error}</p>}
+                    
+                    <button
+                        type="submit"
+                        style={{
+                            width: '100%',
+                            padding: '12px',
+                            background: '#1a1917',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '14px',
+                            fontWeight: 500,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Iniciar sesión
+                    </button>
+                </form>
+                
+                <p style={{ fontSize: '12px', color: '#b0ada7', marginTop: '20px', textAlign: 'center' }}>
+                    Usuario: admin | Contraseña: admin123
+                </p>
+            </div>
+        </div>
+    );
+}
 
 export default Login;
