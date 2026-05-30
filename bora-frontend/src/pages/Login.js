@@ -1,39 +1,40 @@
 import React, { useState } from 'react';
 
-function Login({ onLogin}){
+function Login({ onLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
+    console.log('API_URL:', process.env.REACT_APP_API_URL); // ← AGREGA ESTO
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    const credentials = btoa(`${username}:${password}`);
-    
+        const credentials = btoa(`${username}:${password}`);
+        
+        console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`); // ← Y ESTO
 
-    try{
-        const response = await fetch(
-  `${process.env.REACT_APP_API_URL}/api/auth/login`, {
-    headers: {
-      'Authorization': `Basic ${credentials}`
-    }
-        });
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/api/auth/login`, {
+                headers: {
+                    'Authorization': `Basic ${credentials}`
+                }
+            });
 
-
-        if (response.ok) {
-            localStorage.setItem('auth', credentials);
-            onLogin();
-
-        } else {
-            setError('Usuario o contraseña incorrectos');
+            if (response.ok) {
+                localStorage.setItem('auth', credentials);
+                onLogin();
+            } else {
+                setError('Usuario o contraseña incorrectos');
+            }
+        } catch (err) {
+            setError('Error de conexión');
+            console.error('Error:', err);
         }
-
-    } catch (err) {
-        setError('Error de conexión');
-    }
-};
-
+    };
+    // ...
+}
 
     return (
         <div style={{
@@ -131,6 +132,6 @@ const handleSubmit = async (e) => {
       </div>
     </div>
   );
-}
+
 
 export default Login;
