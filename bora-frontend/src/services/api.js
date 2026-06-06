@@ -9,58 +9,67 @@ const getAuthHeaders = () => {
   };
 };
 
-export const clientesAPI = {
+export const eventosAPI = {
 
   getAll: async () => {
-    const response = await fetch(`${API_URL}/clientes`, {
+    const response = await fetch(`${API_URL}/eventos`, {
       headers: getAuthHeaders()
     });
 
     return response.json();
   },
 
-  getById: async (id) => {
-    const response = await fetch(`${API_URL}/clientes/${id}`, {
+  hoy: async () => {
+    const response = await fetch(`${API_URL}/eventos/hoy`, {
       headers: getAuthHeaders()
     });
 
     return response.json();
   },
 
-  create: async (cliente) => {
-    const response = await fetch(`${API_URL}/clientes`, {
+  create: async (evento) => {
+    const response = await fetch(`${API_URL}/eventos`, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(cliente),
+      body: JSON.stringify(evento),
+    });
+
+    if (!response.ok) {
+      const texto = await response.text();
+      throw new Error(`Error ${response.status}: ${texto}`);
+    }
+
+    const texto = await response.text();
+    return texto ? JSON.parse(texto) : {};
+  },
+
+  completar: async (id) => {
+    const response = await fetch(`${API_URL}/eventos/completar/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders()
     });
 
     return response.json();
   },
 
-  update: async (id, cliente) => {
-    const response = await fetch(`${API_URL}/clientes/${id}`, {
+  cancelar: async (id) => {
+    const response = await fetch(`${API_URL}/eventos/cancelar/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders()
+    });
+
+    return response.json();
+  },
+
+  update: async (id, evento) => {
+    const response = await fetch(`${API_URL}/eventos/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
-      body: JSON.stringify(cliente),
+      body: JSON.stringify(evento),
     });
 
     return response.json();
   },
-
-  delete: async (id) => {
-    await fetch(`${API_URL}/clientes/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-  },
-
-  count: async () => {
-    const response = await fetch(`${API_URL}/clientes/count`, {
-      headers: getAuthHeaders()
-    });
-
-    return response.json();
-  }
 };
 
 export const ventasAPI = {
