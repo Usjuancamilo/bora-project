@@ -29,14 +29,24 @@ export const clientesAPI = {
   },
 
   create: async (cliente) => {
-    const response = await fetch(`${API_URL}/clientes`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(cliente),
-    });
 
-    return response.json();
-  },
+  console.log('AUTH:', localStorage.getItem('auth'));
+
+  const response = await fetch(`${API_URL}/clientes`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(cliente),
+  });
+
+  console.log('STATUS:', response.status);
+
+  if (!response.ok) {
+    const texto = await response.text();
+    throw new Error(`Error ${response.status}: ${texto}`);
+  }
+
+  return response.json();
+},
 
   update: async (id, cliente) => {
     const response = await fetch(`${API_URL}/clientes/${id}`, {
