@@ -15,8 +15,11 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://quiet-hummingbird-479940.netlify.app");
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
