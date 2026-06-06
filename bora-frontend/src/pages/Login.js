@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 function Login({ onLogin }) {
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -8,131 +9,72 @@ function Login({ onLogin }) {
     console.log('API_URL:', process.env.REACT_APP_API_URL);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const credentials = btoa(`${username}:${password}`);
+        e.preventDefault();
 
-    console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
+        const credentials = btoa(`${username}:${password}`);
 
-    try {
-        const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/auth/login`,
-            {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Basic ${credentials}`
-                }
-            }
+        console.log(
+            'Intentando login a:',
+            `${process.env.REACT_APP_API_URL}/api/clientes`
         );
 
-        if (response.ok) {
+        try {
 
-            localStorage.setItem('auth', credentials);
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/api/clientes`,
+                {
+                    headers: {
+                        'Authorization': `Basic ${credentials}`
+                    }
+                }
+            );
 
-            onLogin();
+            if (response.ok) {
 
-        } else {
+                localStorage.setItem('auth', credentials);
 
-            setError('Usuario o contraseña incorrectos');
+                onLogin();
+
+            } else {
+
+                setError('Usuario o contraseña incorrectos');
+
+            }
+
+        } catch (err) {
+
+            setError('Error de conexión');
+            console.error('Error:', err);
+
         }
-
-    } catch (err) {
-
-        setError('Error de conexión');
-        console.error('Error:', err);
-    }
-};
+    };
 
     return (
-        <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            background: '#faf9f7'
-        }}>
-            <div style={{
-                background: '#fff',
-                padding: '40px',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                width: '100%',
-                maxWidth: '400px'
-            }}>
-                <h1 style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
-                    fontSize: '32px',
-                    marginBottom: '8px',
-                    textAlign: 'center'
-                }}>Bora</h1>
-                <p style={{
-                    fontSize: '12px',
-                    color: '#b0ada7',
-                    textAlign: 'center',
-                    letterSpacing: '.1em',
-                    textTransform: 'uppercase',
-                    marginBottom: '30px'
-                }}>Tienda Virtual</p>
+        <div>
+            <form onSubmit={handleSubmit}>
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '15px' }}>
-                        <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Usuario</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                border: '1px solid #e8e5df',
-                                borderRadius: '6px',
-                                fontSize: '14px'
-                            }}
-                            required
-                        />
-                    </div>
-                    
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ fontSize: '13px', color: '#7a7872', display: 'block', marginBottom: '5px' }}>Contraseña</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                border: '1px solid #e8e5df',
-                                borderRadius: '6px',
-                                fontSize: '14px'
-                            }}
-                            required
-                        />
-                    </div>
-                    
-                    {error && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '15px' }}>{error}</p>}
-                    
-                    <button
-                        type="submit"
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            background: '#1a1917',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontSize: '14px',
-                            fontWeight: 500,
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Iniciar sesión
-                    </button>
-                </form>
-                
-                <p style={{ fontSize: '12px', color: '#b0ada7', marginTop: '20px', textAlign: 'center' }}>
-                    Usuario: admin | Contraseña: admin123
-                </p>
-            </div>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Usuario"
+                />
+
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Contraseña"
+                />
+
+                <button type="submit">
+                    Iniciar sesión
+                </button>
+
+                {error && <p>{error}</p>}
+
+            </form>
         </div>
     );
 }
