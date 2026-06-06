@@ -15,9 +15,13 @@ function Login({ onLogin }) {
 
     localStorage.setItem('auth', credentials);
 
-    console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
+    console.log(
+        'Intentando login a:',
+        `${process.env.REACT_APP_API_URL}/api/auth/login`
+    );
 
     try {
+
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/auth/login`,
             {
@@ -32,6 +36,7 @@ function Login({ onLogin }) {
         } else {
             setError('Usuario o contraseña incorrectos');
         }
+
     } catch (err) {
         setError('Error de conexión');
         console.error('Error:', err);
