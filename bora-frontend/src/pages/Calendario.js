@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { eventosAPI } from '../services/api';
 
-// Festivos Colombia — fuera del componente
 const getFestivos = (anio) => {
   const a = anio % 19, b = Math.floor(anio / 100), c = anio % 100;
   const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
@@ -102,9 +101,7 @@ function Calendario() {
 
   useEffect(() => {
     const handleClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setMenuAbierto(null);
-      }
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuAbierto(null);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -114,9 +111,7 @@ function Calendario() {
     try {
       const data = await eventosAPI.getAll();
       setEventos(data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    } catch (error) { console.error('Error:', error); }
   };
 
   const diasEnMes = new Date(anioActual, mesActual + 1, 0).getDate();
@@ -146,16 +141,22 @@ function Calendario() {
     return eventos.filter(e => e.fecha === fechaStr && !e.cancelado);
   };
 
-  const colorPrioridad = (p) => {
-    if (p === 'ALTA') return '#e74c3c';
-    if (p === 'MEDIA') return '#f39c12';
-    return '#27ae60';
+  const colorPunto = (p) => {
+    if (p === 'ALTA') return 'bg-red-500';
+    if (p === 'MEDIA') return 'bg-yellow-400';
+    return 'bg-green-500';
   };
 
-  const labelPrioridad = (p) => {
-    if (p === 'ALTA') return { bg: '#fdeaea', color: '#c0392b' };
-    if (p === 'MEDIA') return { bg: '#fef3e2', color: '#d68910' };
-    return { bg: '#eaf6ee', color: '#1e8c45' };
+  const borderPrioridad = (p) => {
+    if (p === 'ALTA') return 'border-l-red-500';
+    if (p === 'MEDIA') return 'border-l-yellow-400';
+    return 'border-l-green-500';
+  };
+
+  const badgePrioridad = (p) => {
+    if (p === 'ALTA') return 'bg-red-100 text-red-700';
+    if (p === 'MEDIA') return 'bg-yellow-100 text-yellow-700';
+    return 'bg-green-100 text-green-700';
   };
 
   const completar = async (id) => { await eventosAPI.completar(id); cargarEventos(); };
@@ -204,39 +205,111 @@ function Calendario() {
   for (let i = 0; i < offset; i++) celdas.push(null);
   for (let d = 1; d <= diasEnMes; d++) celdas.push(d);
 
-  return (
-    <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gray-300 mb-3";
+  const labelCls = "block text-xs text-gray-500 mb-1";
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: '500' }}>Calendario</h1>
-          <p style={{ margin: 0, fontSize: '13px', color: '#888' }}>Gestiona tus eventos y pendientes</p>
+  const FormModal = ({ titulo, formValues, onChange, onSubmit, onClose }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-screen overflow-y-auto shadow-xl">
+        <div className="flex justify-between items-center mb-5">
+          <p className="text-base font-medium text-gray-900">{titulo}</p>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg">✕</button>
         </div>
-        <button onClick={() => setMostrarForm(true)} style={btnPrimario}>+ Nuevo evento</button>
-      </div>
+        <form onSubmit={onSubmit}>
+          <label className={labelCls}>Título</label>
+          <input name="titulo" value={formValues.titulo} onChange={onChange}
+            placeholder="Ej: Empacar pedido" required className={inputCls} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '20px', alignItems: 'start' }}>
+          <label className={labelCls}>Descripción</label>
+          <textarea name="descripcion" value={formValues.descripcion} onChange={onChange}
+            placeholder="Detalle opcional" rows="3"
+            className={inputCls + " resize-y"} />
 
-        {/* Calendario */}
-        <div style={{ background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '12px', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <button onClick={mesAnterior} style={btnNav}>‹</button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '16px', fontWeight: '500' }}>{meses[mesActual]} {anioActual}</span>
-              <button onClick={irAHoy} style={btnHoy}>Hoy</button>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls}>Fecha</label>
+              <input name="fecha" type="date" value={formValues.fecha} onChange={onChange}
+                required className={inputCls} />
             </div>
-            <button onClick={mesSiguiente} style={btnNav}>›</button>
+            <div>
+              <label className={labelCls}>Hora</label>
+              <input name="hora" type="time" value={formValues.hora} onChange={onChange}
+                className={inputCls} />
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '4px' }}>
+          <label className={labelCls}>Prioridad</label>
+          <select name="prioridad" value={formValues.prioridad} onChange={onChange} className={inputCls}>
+            <option value="ALTA">Alta</option>
+            <option value="MEDIA">Media</option>
+            <option value="BAJA">Baja</option>
+          </select>
+
+          <div className="flex gap-3 justify-end mt-2">
+            <button type="button" onClick={onClose}
+              className="border border-gray-200 text-gray-500 text-sm px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              Cancelar
+            </button>
+            <button type="submit"
+              className="bg-gray-900 text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+
+      {/* Header */}
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-xl font-medium text-gray-900 mb-1">Calendario</h1>
+          <p className="text-sm text-gray-400">Gestiona tus eventos y pendientes</p>
+        </div>
+        <button onClick={() => setMostrarForm(true)}
+          className="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+          + Nuevo evento
+        </button>
+      </div>
+
+      {/* Grid — apilado en móvil, lado a lado en desktop */}
+      <div className="flex flex-col md:grid md:grid-cols-[1fr_300px] gap-4">
+
+        {/* Calendario */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+          {/* Navegación mes */}
+          <div className="flex justify-between items-center mb-5">
+            <button onClick={mesAnterior}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-gray-500 hover:bg-gray-50 transition-colors text-lg">
+              ‹
+            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-base font-medium text-gray-800">{meses[mesActual]} {anioActual}</span>
+              <button onClick={irAHoy}
+                className="border border-gray-200 rounded-md px-3 py-1 text-xs text-gray-500 hover:bg-gray-50 transition-colors">
+                Hoy
+              </button>
+            </div>
+            <button onClick={mesSiguiente}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-gray-500 hover:bg-gray-50 transition-colors text-lg">
+              ›
+            </button>
+          </div>
+
+          {/* Días semana */}
+          <div className="grid grid-cols-7 mb-1">
             {diasSemana.map(d => (
-              <div key={d} style={{ textAlign: 'center', fontSize: '12px', color: '#999', fontWeight: '500', padding: '6px 0', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div key={d} className="text-center text-xs text-gray-400 font-medium py-1.5 uppercase tracking-wide">
                 {d}
               </div>
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
+          {/* Celdas */}
+          <div className="grid grid-cols-7 gap-0.5">
             {celdas.map((dia, idx) => {
               if (!dia) return <div key={`e-${idx}`} />;
               const evDia = eventosDelDia(dia);
@@ -246,25 +319,21 @@ function Calendario() {
               const esFestivo = !!festivos[fechaCelda];
               return (
                 <div key={dia} onClick={() => setDiaSeleccionado(dia)}
-                  style={{
-                    minHeight: '64px', padding: '6px', borderRadius: '8px', cursor: 'pointer',
-                    background: seleccionado ? '#111' : hoyDia ? '#f0f0f0' : esFestivo ? '#ffe2ff82' : 'transparent',
-                    transition: 'background 0.15s'
-                  }}
-                  onMouseEnter={e => { if (!seleccionado) e.currentTarget.style.background = '#f8f8f8'; }}
-                  onMouseLeave={e => { if (!seleccionado) e.currentTarget.style.background = hoyDia ? '#f0f0f0' : esFestivo ? '#ffe2ff82' : 'transparent'; }}
-                >
-                  <div style={{ fontSize: '13px', fontWeight: hoyDia ? '600' : '400', color: seleccionado ? '#fff' : esFestivo ? '#D38BCE' : '#333', marginBottom: '4px', textAlign: 'center' }}>
+                  className={`min-h-14 p-1.5 rounded-lg cursor-pointer transition-colors
+                    ${seleccionado ? 'bg-gray-900' : hoyDia ? 'bg-gray-100' : esFestivo ? 'bg-purple-50' : 'hover:bg-gray-50'}`}>
+                  <div className={`text-xs text-center mb-1 font-${hoyDia ? '600' : '400'}
+                    ${seleccionado ? 'text-white' : esFestivo ? 'text-purple-400' : 'text-gray-700'}`}>
                     {dia}
                   </div>
                   {esFestivo && !seleccionado && (
-                    <div style={{ fontSize: '9px', color: 'hsl(304 45 69)', textAlign: 'center', lineHeight: 1.2, marginBottom: '2px' }}>
+                    <div className="text-center text-purple-300 leading-tight mb-0.5" style={{ fontSize: '8px' }}>
                       {festivos[fechaCelda].split(' ').slice(0, 2).join(' ')}
                     </div>
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '2px' }}>
+                  <div className="flex justify-center flex-wrap gap-0.5">
                     {evDia.slice(0, 3).map(ev => (
-                      <div key={ev.id} style={{ width: '6px', height: '6px', borderRadius: '50%', background: seleccionado ? '#fff' : colorPrioridad(ev.prioridad) }} />
+                      <div key={ev.id}
+                        className={`w-1.5 h-1.5 rounded-full ${seleccionado ? 'bg-white' : colorPunto(ev.prioridad)}`} />
                     ))}
                   </div>
                 </div>
@@ -273,67 +342,77 @@ function Calendario() {
           </div>
         </div>
 
-        {/* Panel lateral */}
-        <div style={{ background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '12px', padding: '20px' }}>
-          <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: '500' }}>Eventos del día</p>
-          <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#888', textTransform: 'capitalize' }}>{fechaDiaSeleccionado}</p>
+        {/* Panel eventos del día */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-800 mb-1">Eventos del día</p>
+          <p className="text-xs text-gray-400 capitalize mb-3">{fechaDiaSeleccionado}</p>
 
           {festivos[formatFechaISO(anioActual, mesActual, diaSeleccionado)] && (
-            <div style={{ background: '#ffe2ff82', border: '0.5px solid #ffe2ff82', borderRadius: '8px', padding: '8px 12px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '14px' }}>🎉</span>
-              <span style={{ fontSize: '12px', color: '#955594', fontWeight: '500' }}>
+            <div className="bg-purple-50 border border-purple-100 rounded-lg px-3 py-2 mb-3 flex items-center gap-2">
+              <span className="text-sm">🎉</span>
+              <span className="text-xs text-purple-600 font-medium">
                 {festivos[formatFechaISO(anioActual, mesActual, diaSeleccionado)]}
               </span>
             </div>
           )}
 
           {eventosDia.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: '#bbb', fontSize: '13px' }}>Sin eventos este día</div>
+            <div className="text-center py-10 text-sm text-gray-300">Sin eventos este día</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }} ref={menuRef}>
-              {eventosDia.map(ev => {
-                const { bg, color } = labelPrioridad(ev.prioridad);
-                return (
-                  <div key={ev.id} style={{ border: '0.5px solid #eee', borderRadius: '10px', padding: '12px', opacity: ev.completado ? 0.5 : 1, borderLeft: `3px solid ${colorPrioridad(ev.prioridad)}`, position: 'relative' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: '500', textDecoration: ev.completado ? 'line-through' : 'none' }}>{ev.titulo}</p>
-                        {ev.descripcion && <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#888' }}>{ev.descripcion}</p>}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {ev.hora && <span style={{ fontSize: '11px', color: '#aaa' }}>⏰ {ev.hora}</span>}
-                          <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '6px', background: bg, color }}>{ev.prioridad}</span>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '6px', marginLeft: '8px', alignItems: 'center' }}>
-                        {!ev.completado && !ev.cancelado && (
-                          <>
-                            <button onClick={() => completar(ev.id)} style={btnCheck}>✓</button>
-                            <button onClick={() => cancelar(ev.id)} style={btnX}>✕</button>
-                          </>
-                        )}
-                        {!ev.completado && (
-                          <div style={{ position: 'relative' }}>
-                            <button onClick={() => setMenuAbierto(menuAbierto === ev.id ? null : ev.id)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#aaa', padding: '2px 6px', borderRadius: '4px' }}>
-                              ⋮
-                            </button>
-                            {menuAbierto === ev.id && (
-                              <div style={{ position: 'absolute', right: 0, top: '100%', zIndex: 100, background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', minWidth: '130px', overflow: 'hidden' }}>
-                                <div onClick={() => abrirEdicion(ev)}
-                                  style={{ padding: '10px 14px', fontSize: '13px', cursor: 'pointer', color: '#333' }}
-                                  onMouseEnter={e => e.currentTarget.style.background = '#f8f8f8'}
-                                  onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-                                  ✏️ Editar evento
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+            <div className="flex flex-col gap-2" ref={menuRef}>
+              {eventosDia.map(ev => (
+                <div key={ev.id}
+                  className={`border border-gray-100 border-l-4 ${borderPrioridad(ev.prioridad)} rounded-lg p-3 relative
+                    ${ev.completado ? 'opacity-50' : ''}`}>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium text-gray-800 mb-1 ${ev.completado ? 'line-through' : ''}`}>
+                        {ev.titulo}
+                      </p>
+                      {ev.descripcion && (
+                        <p className="text-xs text-gray-400 mb-1.5">{ev.descripcion}</p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        {ev.hora && <span className="text-xs text-gray-300">⏰ {ev.hora}</span>}
+                        <span className={`text-xs px-2 py-0.5 rounded ${badgePrioridad(ev.prioridad)}`}>
+                          {ev.prioridad}
+                        </span>
                       </div>
                     </div>
+                    <div className="flex items-center gap-1 ml-2">
+                      {!ev.completado && !ev.cancelado && (
+                        <>
+                          <button onClick={() => completar(ev.id)}
+                            className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-lg hover:bg-green-100 transition-colors">
+                            ✓
+                          </button>
+                          <button onClick={() => cancelar(ev.id)}
+                            className="bg-red-50 text-red-600 text-xs px-2 py-1 rounded-lg hover:bg-red-100 transition-colors">
+                            ✕
+                          </button>
+                        </>
+                      )}
+                      {!ev.completado && (
+                        <div className="relative">
+                          <button
+                            onClick={() => setMenuAbierto(menuAbierto === ev.id ? null : ev.id)}
+                            className="text-gray-300 hover:text-gray-500 px-1.5 py-1 rounded text-base">
+                            ⋮
+                          </button>
+                          {menuAbierto === ev.id && (
+                            <div className="absolute right-0 top-full z-10 bg-white border border-gray-200 rounded-lg shadow-lg min-w-32 overflow-hidden">
+                              <div onClick={() => abrirEdicion(ev)}
+                                className="px-4 py-2.5 text-sm text-gray-700 cursor-pointer hover:bg-gray-50">
+                                ✏️ Editar evento
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -341,78 +420,27 @@ function Calendario() {
 
       {/* Modal nuevo evento */}
       {mostrarForm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', width: '100%', maxWidth: '480px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>Nuevo evento</p>
-              <button onClick={() => setMostrarForm(false)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#999' }}>✕</button>
-            </div>
-            <form onSubmit={guardarEvento}>
-              <label style={labelFormStyle}>Título</label>
-              <input name="titulo" value={formData.titulo} onChange={handleChange} placeholder="Ej: Empacar pedido" required style={inputStyle} />
-              <label style={labelFormStyle}>Descripción</label>
-              <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} placeholder="Detalle opcional" rows="3" style={{ ...inputStyle, resize: 'vertical' }} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div><label style={labelFormStyle}>Fecha</label><input name="fecha" type="date" value={formData.fecha} onChange={handleChange} required style={inputStyle} /></div>
-                <div><label style={labelFormStyle}>Hora</label><input name="hora" type="time" value={formData.hora} onChange={handleChange} style={inputStyle} /></div>
-              </div>
-              <label style={labelFormStyle}>Prioridad</label>
-              <select name="prioridad" value={formData.prioridad} onChange={handleChange} style={inputStyle}>
-                <option value="ALTA">Alta</option>
-                <option value="MEDIA">Media</option>
-                <option value="BAJA">Baja</option>
-              </select>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-                <button type="button" onClick={() => setMostrarForm(false)} style={btnCancelar}>Cancelar</button>
-                <button type="submit" style={btnPrimario}>Guardar evento</button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <FormModal
+          titulo="Nuevo evento"
+          formValues={formData}
+          onChange={handleChange}
+          onSubmit={guardarEvento}
+          onClose={() => setMostrarForm(false)}
+        />
       )}
 
       {/* Modal editar evento */}
       {eventoEditando && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', width: '100%', maxWidth: '480px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>Editar evento</p>
-              <button onClick={() => setEventoEditando(null)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#999' }}>✕</button>
-            </div>
-            <form onSubmit={guardarEdicion}>
-              <label style={labelFormStyle}>Título</label>
-              <input name="titulo" value={formEdit.titulo} onChange={handleEditChange} required style={inputStyle} />
-              <label style={labelFormStyle}>Descripción</label>
-              <textarea name="descripcion" value={formEdit.descripcion} onChange={handleEditChange} rows="3" style={{ ...inputStyle, resize: 'vertical' }} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div><label style={labelFormStyle}>Fecha</label><input name="fecha" type="date" value={formEdit.fecha} onChange={handleEditChange} required style={inputStyle} /></div>
-                <div><label style={labelFormStyle}>Hora</label><input name="hora" type="time" value={formEdit.hora} onChange={handleEditChange} style={inputStyle} /></div>
-              </div>
-              <label style={labelFormStyle}>Prioridad</label>
-              <select name="prioridad" value={formEdit.prioridad} onChange={handleEditChange} style={inputStyle}>
-                <option value="ALTA">Alta</option>
-                <option value="MEDIA">Media</option>
-                <option value="BAJA">Baja</option>
-              </select>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-                <button type="button" onClick={() => setEventoEditando(null)} style={btnCancelar}>Cancelar</button>
-                <button type="submit" style={btnPrimario}>Guardar cambios</button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <FormModal
+          titulo="Editar evento"
+          formValues={formEdit}
+          onChange={handleEditChange}
+          onSubmit={guardarEdicion}
+          onClose={() => setEventoEditando(null)}
+        />
       )}
     </div>
   );
 }
-
-const btnPrimario    = { background: '#111', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontSize: '14px', fontWeight: '500', cursor: 'pointer' };
-const btnCancelar    = { background: 'transparent', border: '0.5px solid #ddd', color: '#666', borderRadius: '8px', padding: '8px 16px', fontSize: '14px', cursor: 'pointer' };
-const btnNav         = { background: 'transparent', border: '0.5px solid #e5e5e5', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer', fontSize: '18px', color: '#555' };
-const btnHoy         = { background: 'transparent', border: '0.5px solid #ddd', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '12px', color: '#555' };
-const btnCheck       = { background: '#eaf6ee', color: '#1e8c45', border: 'none', borderRadius: '6px', padding: '5px 9px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' };
-const btnX           = { background: '#fdeaea', color: '#c0392b', border: 'none', borderRadius: '6px', padding: '5px 9px', cursor: 'pointer', fontSize: '13px' };
-const inputStyle     = { width: '100%', padding: '10px 12px', borderRadius: '8px', border: '0.5px solid #ddd', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '14px' };
-const labelFormStyle = { display: 'block', fontSize: '12px', color: '#888', marginBottom: '6px' };
 
 export default Calendario;

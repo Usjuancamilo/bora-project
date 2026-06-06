@@ -49,150 +49,148 @@ function Dashboard() {
   const margen = stats.ingresos > 0 ? Math.round((stats.ganancia / stats.ingresos) * 100) : 0;
 
   const colorPrioridad = (p) => {
-    if (p === 'ALTA') return '#e74c3c';
-    if (p === 'MEDIA') return '#f39c12';
-    return '#27ae60';
+    if (p === 'ALTA') return 'border-l-red-500';
+    if (p === 'MEDIA') return 'border-l-yellow-500';
+    return 'border-l-green-500';
   };
 
-  const labelPrioridad = (p) => {
-    if (p === 'ALTA') return { bg: '#fdeaea', color: '#c0392b' };
-    if (p === 'MEDIA') return { bg: '#fef3e2', color: '#d68910' };
-    return { bg: '#eaf6ee', color: '#1e8c45' };
+  const badgePrioridad = (p) => {
+    if (p === 'ALTA') return 'bg-red-100 text-red-700';
+    if (p === 'MEDIA') return 'bg-yellow-100 text-yellow-700';
+    return 'bg-green-100 text-green-700';
   };
 
-  const hoyStr = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const hoyStr = new Date().toLocaleDateString('es-CO', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+
   const pendientesActivos = pendientesHoy.filter(e => !e.completado && !e.cancelado);
 
-
-  //<div style={{background:'#fff', padding:'30px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>   este codigo es un card con efecto borde y sombra, moderno.
-
-//const cardStyle = { background: '#f8f8f8', borderRadius: '10px', padding: '16px' };
-const labelStyle = { margin: '0 0 6px', fontSize: '11px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' };
-const valueStyle = { margin: 0, fontSize: '22px', fontWeight: '500', color: '#111' };
-const hintStyle = { margin: '4px 0 0', fontSize: '12px', color: '#aaa' };
-const btnCheck = { background: '#eaf6ee', color: '#1e8c45', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' };
-const btnX = { background: '#fdeaea', color: '#c0392b', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '13px' };
-
-
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div className="p-4 md:p-6 max-w-6xl mx-auto font-sans">
 
       {/* Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: '500' }}>Dashboard</h1>
-        <p style={{ margin: 0, fontSize: '13px', color: '#888' }}>Resumen general del negocio</p>
+      <div className="mb-6">
+        <h1 className="text-xl font-medium text-gray-900 mb-1">Dashboard</h1>
+        <p className="text-sm text-gray-400">Resumen general del negocio</p>
       </div>
 
-
-  
       {/* Pendientes de hoy */}
-      <div style={{ background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '12px', padding: '24px', marginBottom: '40px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-8">
+        <div className="flex justify-between items-start mb-4">
           <div>
-            <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: '500' }}>Pendientes de hoy</p>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888', textTransform: 'capitalize' }}>{hoyStr}</p>
+            <p className="text-sm font-medium text-gray-800 mb-1">Pendientes de hoy</p>
+            <p className="text-xs text-gray-400 capitalize">{hoyStr}</p>
           </div>
           {pendientesActivos.length > 0 && (
-            <span style={{ background: '#f0f0f0', color: '#555', fontSize: '12px', padding: '4px 10px', borderRadius: '20px' }}>
+            <span className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full">
               {pendientesActivos.length} pendientes
             </span>
           )}
         </div>
 
         {pendientesActivos.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: '#bbb', fontSize: '14px' }}>
+          <div className="text-center py-8 text-gray-300 text-sm">
             No tienes pendientes para hoy ✨
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {pendientesActivos.map(ev => {
-              const { bg, color } = labelPrioridad(ev.prioridad);
-              return (
-                <div key={ev.id} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '12px 14px', borderRadius: '10px',
-                  border: '0.5px solid #eee',
-                  borderLeft: `3px solid ${colorPrioridad(ev.prioridad)}`
-                }}>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: '0 0 3px', fontSize: '13px', fontWeight: '500' }}>{ev.titulo}</p>
-                    {ev.descripcion && <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#888' }}>{ev.descripcion}</p>}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {ev.hora && <span style={{ fontSize: '11px', color: '#aaa' }}>⏰ {ev.hora}</span>}
-                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '6px', background: bg, color }}>{ev.prioridad}</span>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '6px', marginLeft: '12px' }}>
-                    <button onClick={() => completar(ev.id)} style={btnCheck}>✓</button>
-                    <button onClick={() => cancelar(ev.id)} style={btnX}>✕</button>
+          <div className="flex flex-col gap-3">
+            {pendientesActivos.map(ev => (
+              <div
+                key={ev.id}
+                className={`flex items-center justify-between p-3 rounded-lg border border-gray-100 border-l-4 ${colorPrioridad(ev.prioridad)}`}
+              >
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-800 mb-1">{ev.titulo}</p>
+                  {ev.descripcion && (
+                    <p className="text-xs text-gray-400 mb-1">{ev.descripcion}</p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    {ev.hora && (
+                      <span className="text-xs text-gray-300">⏰ {ev.hora}</span>
+                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded ${badgePrioridad(ev.prioridad)}`}>
+                      {ev.prioridad}
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+                <div className="flex gap-2 ml-3">
+                  <button
+                    onClick={() => completar(ev.id)}
+                    className="bg-green-50 text-green-700 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => cancelar(ev.id)}
+                    className="bg-red-50 text-red-700 text-sm px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-
       {/* Cards métricas */}
-      
-      <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:'20px', marginTop:'20px', marginBottom:'40px'}}>
-  
-  <div style={{background: '#f8f8f8', borderRadius: '10px', padding: '16px'}}>
-    <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'15px'}}>
-      <div style={{fontSize:'15px'}}>👥</div>
-      <p style={labelStyle}>TOTAL CLIENTES</p>
-    </div>
-    <p style={valueStyle}>{stats.clientes}</p>
-  </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-  <div style={{background: '#f8f8f8', borderRadius: '10px', padding: '16px'}}>
-    <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'15px'}}>
-      <div style={{fontSize:'15px'}}>💰</div>
-      <p style={labelStyle}>INGRESOS TOTALES</p>
-    </div>
-    <p style={{ ...valueStyle, color: '#1a7fe8' }}>${formatCOP(stats.ingresos)}</p>
-  </div>
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">👥</span>
+            <p className="text-xs text-gray-400 uppercase tracking-wide">Total clientes</p>
+          </div>
+          <p className="text-xl font-medium text-gray-900">{stats.clientes}</p>
+        </div>
 
-  <div style={{background: '#f8f8f8', borderRadius: '10px', padding: '16px'}}>
-    <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'15px'}}>
-      <div style={{fontSize:'15px'}}>📈</div>
-      <p style={labelStyle}>GANANCIA NETA</p>
-    </div>
-    <p style={{ ...valueStyle, color: '#1e8c45' }}>${formatCOP(stats.ganancia)}</p>
-    <p style={hintStyle}>{margen}% margen</p>
-  </div>
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">💰</span>
+            <p className="text-xs text-gray-400 uppercase tracking-wide">Ingresos totales</p>
+          </div>
+          <p className="text-xl font-medium text-blue-600">${formatCOP(stats.ingresos)}</p>
+        </div>
 
-  <div style={{background: '#f8f8f8', borderRadius: '10px', padding: '16px'}}>
-    <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'15px'}}>
-      <div style={{fontSize:'15px'}}>📦</div>
-      <p style={labelStyle}>COSTOS TOTALES</p>
-    </div>
-    <p style={{...valueStyle, color:'#dc3545'}}>${formatCOP(stats.ingresos - stats.ganancia)}</p>
-    <p style={hintStyle}>empaque incluido</p>
-  </div>
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">📈</span>
+            <p className="text-xs text-gray-400 uppercase tracking-wide">Ganancia neta</p>
+          </div>
+          <p className="text-xl font-medium text-green-600">${formatCOP(stats.ganancia)}</p>
+          <p className="text-xs text-gray-300 mt-1">{margen}% margen</p>
+        </div>
 
-</div>
+        <div className="bg-gray-50 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">📦</span>
+            <p className="text-xs text-gray-400 uppercase tracking-wide">Costos totales</p>
+          </div>
+          <p className="text-xl font-medium text-red-500">${formatCOP(stats.ingresos - stats.ganancia)}</p>
+          <p className="text-xs text-gray-300 mt-1">empaque incluido</p>
+        </div>
 
-
+      </div>
 
       {/* Gráfico */}
-      <div style={{ background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '12px', padding: '24px', marginBottom: '20px' }}>
-        <p style={{ margin: '0 0 20px', fontSize: '15px', fontWeight: '500' }}>Ventas por mes</p>
+      <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <p className="text-sm font-medium text-gray-800 mb-5">Ventas por mes</p>
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={ventasMes} barSize={40}>
             <XAxis dataKey="mes" tick={{ fontSize: 12, fill: '#999' }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 12, fill: '#999' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value) => [`$${Number(value).toLocaleString('es-CO')}`, 'Ventas']} contentStyle={{ borderRadius: '8px', border: '0.5px solid #eee', fontSize: '13px' }} />
+            <Tooltip
+              formatter={(value) => [`$${Number(value).toLocaleString('es-CO')}`, 'Ventas']}
+              contentStyle={{ borderRadius: '8px', border: '0.5px solid #eee', fontSize: '13px' }}
+            />
             <Bar dataKey="total" fill="#111" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      
     </div>
   );
 }
-
 
 export default Dashboard;

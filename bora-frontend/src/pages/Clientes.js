@@ -8,11 +8,7 @@ function Clientes() {
   const [clienteEdit, setClienteEdit] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [formData, setFormData] = useState({
-    nombre: '',
-    telefono: '',
-    ciudad: '',
-    //instagram: '',
-    notas: ''
+    nombre: '', telefono: '', ciudad: '', notas: ''
   });
 
   useEffect(() => { cargarClientes(); }, []);
@@ -48,11 +44,7 @@ function Clientes() {
   const cerrarForm = () => {
     setMostrarForm(false);
     setClienteEdit(null);
-    setFormData({ nombre: '', 
-      telefono: '', 
-      ciudad: '', 
-      //instagram: '', 
-      notas: '' });
+    setFormData({ nombre: '', telefono: '', ciudad: '', notas: '' });
   };
 
   const editarCliente = (cliente) => {
@@ -82,20 +74,20 @@ function Clientes() {
     );
   });
 
-  if (loading) return <div style={{ padding: '20px' }}>Cargando...</div>;
+  if (loading) return <div className="p-6 text-sm text-gray-400">Cargando...</div>;
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div className="p-4 md:p-6 max-w-6xl mx-auto">
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+      <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: '500' }}>Clientes</h1>
-          <p style={{ margin: 0, fontSize: '13px', color: '#888' }}>{clientes.length} clientes registrados</p>
+          <h1 className="text-xl font-medium text-gray-900 mb-1">Clientes</h1>
+          <p className="text-sm text-gray-400">{clientes.length} clientes registrados</p>
         </div>
         <button
           onClick={() => mostrarForm ? cerrarForm() : setMostrarForm(true)}
-          style={btnPrimario}
+          className="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
         >
           {mostrarForm ? '✕ Cancelar' : '+ Nuevo cliente'}
         </button>
@@ -103,94 +95,99 @@ function Clientes() {
 
       {/* Formulario */}
       {mostrarForm && (
-        <div style={{
-          background: '#f8f8f8', border: '0.5px solid #e5e5e5',
-          borderRadius: '12px', padding: '24px', marginBottom: '24px'
-        }}>
-          <p style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '500' }}>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
+          <p className="text-sm font-medium text-gray-800 mb-4">
             {clienteEdit ? 'Editar cliente' : 'Nuevo cliente'}
           </p>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {/*}  <input name="codigo" value={formData.codigo} onChange={handleChange}
-                placeholder="Código (ej: CLI-001)" required style={inputStyle} /> */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <input name="nombre" value={formData.nombre} onChange={handleChange}
-                placeholder="Nombre completo" required style={inputStyle} />
+                placeholder="Nombre completo" required
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gray-300" />
               <input name="telefono" value={formData.telefono} onChange={handleChange}
-                placeholder="Teléfono" style={inputStyle} />
+                placeholder="Teléfono"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gray-300" />
               <input name="ciudad" value={formData.ciudad} onChange={handleChange}
-                placeholder="Ciudad" style={inputStyle} />
-              {/*<input name="instagram" value={formData.instagram} onChange={handleChange}
-                placeholder="Instagram" style={inputStyle} /> */}
+                placeholder="Ciudad"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gray-300" />
             </div>
             <textarea name="notas" value={formData.notas} onChange={handleChange}
               placeholder="Notas" rows="3"
-              style={{ ...inputStyle, width: '100%', marginTop: '12px', resize: 'vertical', boxSizing: 'border-box' }} />
-            <button type="submit" style={{ ...btnPrimario, marginTop: '16px', background: '#1e8c45' }}>
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gray-300 mt-3 resize-y" />
+            <button type="submit"
+              className="mt-4 bg-green-700 text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-green-800 transition-colors">
               {clienteEdit ? 'Actualizar' : 'Guardar'}
             </button>
           </form>
         </div>
       )}
 
-      {/* Tabla header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <p style={{ margin: 0, fontSize: '15px', fontWeight: '500' }}>Listado de clientes</p>
-        <div style={searchBox}>
-          <span style={{ color: '#aaa', fontSize: '14px' }}>🔍</span>
+      {/* Buscador */}
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-sm font-medium text-gray-800">Listado de clientes</p>
+        <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5">
+          <span className="text-gray-400 text-sm">🔍</span>
           <input
             type="text"
             placeholder="Buscar..."
             value={busqueda}
             onChange={e => setBusqueda(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '13px', width: '160px', color: '#333' }}
+            className="bg-transparent border-none outline-none text-sm w-36 text-gray-700"
           />
         </div>
       </div>
 
-      {/* Tabla */}
-      <div style={{ background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: '12px', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+      {/* Tabla — solo desktop */}
+      <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr style={{ background: '#f8f8f8', borderBottom: '0.5px solid #eee' }}>
-              <th style={thStyle}>Código</th>
-              <th style={thStyle}>Cliente</th>
-              <th style={thStyle}>Teléfono</th>
-              <th style={thStyle}>Ciudad</th>
-              <th style={thStyle}>Instagram</th>
-              <th style={{ ...thStyle, textAlign: 'center' }}>Acciones</th>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              <th className="px-3 py-2.5 text-left text-xs text-gray-400 font-medium uppercase tracking-wide">Código</th>
+              <th className="px-3 py-2.5 text-left text-xs text-gray-400 font-medium uppercase tracking-wide">Cliente</th>
+              <th className="px-3 py-2.5 text-left text-xs text-gray-400 font-medium uppercase tracking-wide">Teléfono</th>
+              <th className="px-3 py-2.5 text-left text-xs text-gray-400 font-medium uppercase tracking-wide">Ciudad</th>
+              <th className="px-3 py-2.5 text-left text-xs text-gray-400 font-medium uppercase tracking-wide">Instagram</th>
+              <th className="px-3 py-2.5 text-center text-xs text-gray-400 font-medium uppercase tracking-wide">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {clientesFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: '#aaa' }}>
+                <td colSpan="6" className="py-10 text-center text-sm text-gray-300">
                   No se encontraron clientes
                 </td>
               </tr>
             ) : (
               clientesFiltrados.map((c) => (
-                <tr key={c.id} style={{ borderBottom: '0.5px solid #f0f0f0' }}>
-                  <td style={{ ...tdStyle, color: '#999', fontSize: '12px' }}>{c.codigo}</td>
-                  <td style={tdStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={avatarStyle}>{iniciales(c.nombre)}</div>
+                <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                  <td className="px-3 py-3 text-xs text-gray-400">{c.codigo}</td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-xs font-medium text-blue-500 shrink-0">
+                        {iniciales(c.nombre)}
+                      </div>
                       <div>
-                        <div style={{ fontWeight: '500' }}>{c.nombre}</div>
-                        {c.notas && <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{c.notas.substring(0, 40)}{c.notas.length > 40 ? '...' : ''}</div>}
+                        <div className="font-medium text-gray-800">{c.nombre}</div>
+                        {c.notas && <div className="text-xs text-gray-400 mt-0.5">{c.notas.substring(0, 40)}{c.notas.length > 40 ? '...' : ''}</div>}
                       </div>
                     </div>
                   </td>
-                  <td style={tdStyle}>{c.telefono || <span style={{ color: '#ccc' }}>—</span>}</td>
-                  <td style={tdStyle}>{c.ciudad || <span style={{ color: '#ccc' }}>—</span>}</td>
-                  <td style={tdStyle}>
+                  <td className="px-3 py-3 text-gray-600">{c.telefono || <span className="text-gray-200">—</span>}</td>
+                  <td className="px-3 py-3 text-gray-600">{c.ciudad || <span className="text-gray-200">—</span>}</td>
+                  <td className="px-3 py-3">
                     {c.instagram
-                      ? <span style={{ color: '#1a7fe8' }}>@{c.instagram.replace('@', '')}</span>
-                      : <span style={{ color: '#ccc' }}>—</span>}
+                      ? <span className="text-blue-500">@{c.instagram.replace('@', '')}</span>
+                      : <span className="text-gray-200">—</span>}
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <button onClick={() => editarCliente(c)} style={btnEditar}>Editar</button>
-                    <button onClick={() => eliminarCliente(c.id)} style={btnEliminar}>Eliminar</button>
+                  <td className="px-3 py-3 text-center">
+                    <button onClick={() => editarCliente(c)}
+                      className="border border-blue-200 text-blue-500 text-xs px-3 py-1 rounded-lg mr-2 hover:bg-blue-50 transition-colors">
+                      Editar
+                    </button>
+                    <button onClick={() => eliminarCliente(c.id)}
+                      className="border border-red-200 text-red-500 text-xs px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))
@@ -198,44 +195,48 @@ function Clientes() {
           </tbody>
         </table>
       </div>
+
+      {/* Tarjetas — solo móvil */}
+      <div className="md:hidden flex flex-col gap-3">
+        {clientesFiltrados.length === 0 ? (
+          <div className="text-center py-10 text-sm text-gray-300">
+            No se encontraron clientes
+          </div>
+        ) : (
+          clientesFiltrados.map((c) => (
+            <div key={c.id} className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-500 shrink-0">
+                  {iniciales(c.nombre)}
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-800">{c.nombre}</div>
+                  {c.codigo && <div className="text-xs text-gray-400">{c.codigo}</div>}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 text-xs text-gray-500 mb-3">
+                {c.telefono && <span>📞 {c.telefono}</span>}
+                {c.ciudad && <span>📍 {c.ciudad}</span>}
+                {c.instagram && <span className="text-blue-500">@{c.instagram.replace('@', '')}</span>}
+                {c.notas && <span className="text-gray-400 italic">{c.notas.substring(0, 60)}{c.notas.length > 60 ? '...' : ''}</span>}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => editarCliente(c)}
+                  className="flex-1 border border-blue-200 text-blue-500 text-xs py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+                  Editar
+                </button>
+                <button onClick={() => eliminarCliente(c.id)}
+                  className="flex-1 border border-red-200 text-red-500 text-xs py-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
     </div>
   );
 }
-
-const btnPrimario = {
-  background: '#111', color: '#fff', border: 'none', borderRadius: '8px',
-  padding: '8px 16px', fontSize: '14px', fontWeight: '500', cursor: 'pointer'
-};
-const inputStyle = {
-  padding: '10px 12px', borderRadius: '8px', border: '0.5px solid #ddd',
-  fontSize: '13px', outline: 'none', width: '100%', boxSizing: 'border-box'
-};
-const searchBox = {
-  display: 'flex', alignItems: 'center', gap: '8px',
-  background: '#f5f5f5', border: '0.5px solid #ddd',
-  borderRadius: '8px', padding: '6px 12px'
-};
-const thStyle = {
-  padding: '10px 12px', textAlign: 'left', color: '#999',
-  fontWeight: '500', fontSize: '11px',
-  textTransform: 'uppercase', letterSpacing: '0.04em'
-};
-const tdStyle = { padding: '12px', verticalAlign: 'middle' };
-const avatarStyle = {
-  width: '32px', height: '32px', borderRadius: '50%',
-  background: '#e8f0fd', display: 'flex', alignItems: 'center',
-  justifyContent: 'center', fontSize: '12px', fontWeight: '500',
-  color: '#1a7fe8', flexShrink: 0
-};
-const btnEditar = {
-  background: 'transparent', border: '0.5px solid #b0d0f5',
-  color: '#1a7fe8', borderRadius: '6px', padding: '4px 10px',
-  fontSize: '12px', cursor: 'pointer', marginRight: '6px'
-};
-const btnEliminar = {
-  background: 'transparent', border: '0.5px solid #f5a0a0',
-  color: '#c0392b', borderRadius: '6px', padding: '4px 10px',
-  fontSize: '12px', cursor: 'pointer'
-};
 
 export default Clientes;
