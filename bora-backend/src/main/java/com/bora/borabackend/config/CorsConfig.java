@@ -6,6 +6,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+
 @Configuration
 public class CorsConfig {
 
@@ -14,13 +16,20 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://quiet-hummingbird-479940.netlify.app");
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "https://quiet-hummingbird-479940.netlify.app"
+        ));
 
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.setAllowedMethods(Arrays.asList(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
 
-        config.addExposedHeader("Authorization");
+        config.setAllowedHeaders(Arrays.asList("*"));
 
         config.setAllowCredentials(true);
 
