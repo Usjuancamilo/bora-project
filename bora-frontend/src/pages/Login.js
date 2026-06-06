@@ -13,29 +13,38 @@ function Login({ onLogin }) {
     console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
 
     try {
-        const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/auth/login`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            }
-        );
 
-        if (response.ok) {
-            onLogin();
-        } else {
-            setError('Usuario o contraseña incorrectos');
+    const credentials = btoa(`${username}:${password}`);
+
+    const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/auth/login`,
+        {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${credentials}`
+            }
         }
-    } catch (err) {
-        setError('Error de conexión');
-        console.error('Error:', err);
+    );
+
+    if (response.ok) {
+
+        localStorage.setItem('auth', credentials);
+
+        console.log('AUTH GUARDADO:', credentials);
+
+        onLogin();
+
+    } else {
+        setError('Usuario o contraseña incorrectos');
     }
+
+} catch (err) {
+
+    setError('Error de conexión');
+
+    console.error('Error:', err);
+}
+
 };
 
     return (
