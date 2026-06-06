@@ -12,16 +12,11 @@ function Login({ onLogin }) {
     const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(
-        'Intentando login a:',
-        `${process.env.REACT_APP_API_URL}/api/auth/login`
-    );
+    console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
 
     try {
 
         const auth = btoa(`${username}:${password}`);
-
-        localStorage.setItem('auth', auth);
 
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/auth/login`,
@@ -39,16 +34,24 @@ function Login({ onLogin }) {
         );
 
         if (response.ok) {
+
+            localStorage.setItem('auth', auth);
+
             onLogin();
+
         } else {
+
             setError('Usuario o contraseña incorrectos');
+
         }
 
     } catch (err) {
+
+        console.error(err);
         setError('Error de conexión');
-        console.error('Error:', err);
+
     }
-};
+};  
 
 
 
