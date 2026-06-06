@@ -16,12 +16,12 @@ function Login({ onLogin }) {
 
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_API_URL}/api/auth/login`, {
-                headers: {
-                    'Authorization': `Basic ${credentials}`
-                }
-            });
-
+    `${process.env.REACT_APP_API_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: {
+        'Authorization': `Basic ${credentials}`
+    }
+});
             if (response.ok) {
                 localStorage.setItem('auth', credentials);
                 onLogin();
