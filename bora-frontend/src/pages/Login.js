@@ -10,41 +10,37 @@ function Login({ onLogin }) {
     const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const credentials = btoa(`${username}:${password}`);
+
     console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
 
     try {
-
-    const credentials = btoa(`${username}:${password}`);
-
-    const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/login`,
-        {
-            method: 'POST',
-            headers: {
-                'Authorization': `Basic ${credentials}`
+        const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/auth/login`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Basic ${credentials}`
+                }
             }
+        );
+
+        if (response.ok) {
+
+            localStorage.setItem('auth', credentials);
+
+            onLogin();
+
+        } else {
+
+            setError('Usuario o contraseña incorrectos');
         }
-    );
 
-    if (response.ok) {
+    } catch (err) {
 
-        localStorage.setItem('auth', credentials);
-
-        console.log('AUTH GUARDADO:', credentials);
-
-        onLogin();
-
-    } else {
-        setError('Usuario o contraseña incorrectos');
+        setError('Error de conexión');
+        console.error('Error:', err);
     }
-
-} catch (err) {
-
-    setError('Error de conexión');
-
-    console.error('Error:', err);
-}
-
 };
 
     return (
