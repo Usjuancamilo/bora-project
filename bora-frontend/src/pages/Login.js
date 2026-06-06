@@ -8,31 +8,35 @@ function Login({ onLogin }) {
     console.log('API_URL:', process.env.REACT_APP_API_URL);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const credentials = btoa(`${username}:${password}`);
-        
-        console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
+    console.log('Intentando login a:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
 
-        try {
-            const response = await fetch(
-    `${process.env.REACT_APP_API_URL}/api/auth/login`, {
-    method: 'POST',
-    headers: {
-        'Authorization': `Basic ${credentials}`
-    }
-});
-            if (response.ok) {
-                localStorage.setItem('auth', credentials);
-                onLogin();
-            } else {
-                setError('Usuario o contraseña incorrectos');
+    try {
+        const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/auth/login`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
             }
-        } catch (err) {
-            setError('Error de conexión');
-            console.error('Error:', err);
+        );
+
+        if (response.ok) {
+            onLogin();
+        } else {
+            setError('Usuario o contraseña incorrectos');
         }
-    };
+    } catch (err) {
+        setError('Error de conexión');
+        console.error('Error:', err);
+    }
+};
 
     return (
         <div style={{
