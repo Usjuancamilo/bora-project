@@ -8,12 +8,9 @@ function Login({ onLogin }) {
 
     console.log('API_URL:', process.env.REACT_APP_API_URL);
 
+
     const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const credentials = btoa(`${username}:${password}`);
-
-    localStorage.setItem('auth', credentials);
 
     console.log(
         'Intentando login a:',
@@ -22,12 +19,22 @@ function Login({ onLogin }) {
 
     try {
 
+        const auth = btoa(`${username}:${password}`);
+
+        localStorage.setItem('auth', auth);
+
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/auth/login`,
             {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Basic ${credentials}`
-                }
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
             }
         );
 
@@ -42,6 +49,8 @@ function Login({ onLogin }) {
         console.error('Error:', err);
     }
 };
+
+
 
 
     return (
