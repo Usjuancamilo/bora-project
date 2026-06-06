@@ -43,7 +43,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
-                "https://quiet-hummingbird-479940.netlify.app"
+                "https://bora-project.vercel.app"
         ));
 
         config.setAllowedMethods(Arrays.asList(
